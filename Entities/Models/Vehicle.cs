@@ -9,6 +9,7 @@
         public string LicensePlate { get; set; }
         public string Description { get; set; }
         public Location location { get; set; } 
-        public Drivers DriverId { get; set; } = new Drivers();
+        
+        
     }
 }
