@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Travel_Agent.Auth;
+using Travel_Agent.Auth.AuthModel;
 
 namespace Travel_Agent.Entities.Models.Data
 {
@@ -22,6 +23,8 @@ namespace Travel_Agent.Entities.Models.Data
          public DbSet<Subsidiary> Subsidiaries{get; set;}
          public DbSet<Position>Positions {get; set;}
           public DbSet<Dashboard> Dashboards{get; set;}
+    //      public DbSet<Log> Logs {get; set;}
+          public DbSet<RefreshToken> RefreshTokens{get; set;}
 
 
         

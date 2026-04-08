@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Travel_Agent.Auth;
+using Travel_Agent.Auth.AuthModel;
+using Travel_Agent.Auth.AuthServices;
 using Travel_Agent.Entities.Models.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options
  .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped <IAuthService, AuthService>();
+builder.Services.AddScoped <IEmailService, EmailService>();
+builder.Services.AddScoped <IEmployee, Employee>();
+
 
 //add identity
 builder.Services.AddIdentity<ApplicationUser,IdentityRole>()
@@ -37,7 +44,8 @@ builder.Services.AddAuthentication(Options =>
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuerSigningKey =true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JWT:Secret"])),
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.ASCII.GetBytes(builder.Configuration["JWT:Secret"])),
 
         ValidateIssuer = true,
         ValidIssuer= builder.Configuration["JWT:Issuer"],
@@ -53,7 +61,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
