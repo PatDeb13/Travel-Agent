@@ -34,12 +34,12 @@ namespace Travel_Agent.Auth.AuthServices
             _employee =employee;
         }
 
-       public async Task<ResponseModelAuth<string>> RegisterNewUser([FromBody] RegisterDto payload)
+       public async Task<ResponseModelAuth<RegisterDto>> RegisterNewUser(RegisterDto payload)
         {
             var UserExists = await _userManager.FindByEmailAsync(payload.Email);
             if (UserExists !=null)
             {
-                return new ResponseModelAuth<string>
+                return new ResponseModelAuth<RegisterDto>
             
                 {
                     IsSuccessful = false,
@@ -53,37 +53,46 @@ namespace Travel_Agent.Auth.AuthServices
               FirstName = payload.FirstName,
               LastName = payload.LastName,
               Email = payload.Email,
-              LineManager =payload.LineManager,
-              Subsidiary = payload.Subsidiary,
+              LineManager= payload.LineManager,
               Level =payload.Level,
-              Unit = payload.Unit,
-              
+              Subsidiary =payload.Subsidiary,
+              Unit =payload.Unit,
+             // SecurityStamp = Guid.NewGuid().ToString(),
+              EmployeeID = await _employee.GenerateEmployeeId(),
+
             
             };
             var result = await _userManager.CreateAsync(newUser, payload.Password);
             if (!result.Succeeded)
             {
-                return new ResponseModelAuth<string>
+                return new ResponseModelAuth<RegisterDto>
                 {
                     IsSuccessful =false,
                     Message= "User could not be created!",
 
                 };
-                
             }
             
-            var subject = "Account Created Successfully";
-            var body = $"Hello {newUser.FirstName},\n\n" +
-           "Your account has been successfully created.\n" +
-           $"Email: {newUser.Email}\n\n" +
-           "You can now log in to the system.\n\n" +
-           "Best regards,\nTravel Agent Team";
-           
-            return new ResponseModelAuth<string>
+        var subject = "Account Created Successfully";
+
+        var body = $@"
+        Hello {newUser.FirstName},
+
+        Your account has been successfully created.
+
+        Employee ID: {newUser.EmployeeID}
+        Email: {newUser.Email}
+
+        You can now log in.
+
+        Best regards,Travel Agent Team";
+
+            await _emailService.SendEmailAsync(newUser.Email, subject, body);
+            return new ResponseModelAuth<RegisterDto>
             {
                 IsSuccessful= true,
-                Message= "$ User created",
-                Data = newUser.EmployeeID
+                Message= "$ User created"
+                
                 
             };
 
@@ -94,7 +103,7 @@ namespace Travel_Agent.Auth.AuthServices
     
     public interface IAuthService
     {
-         Task<ResponseModelAuth<string>> RegisterNewUser(RegisterDto payload);
+         Task<ResponseModelAuth<RegisterDto>> RegisterNewUser(RegisterDto payload);
     }
 
   

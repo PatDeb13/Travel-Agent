@@ -41,7 +41,6 @@ public async Task<string> GenerateEmployeeId()
 
     public interface IEmployee
     {
-        
-Task<string> GenerateEmployeeId();
+        Task<string> GenerateEmployeeId();
     }
 }

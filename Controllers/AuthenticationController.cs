@@ -18,7 +18,7 @@ namespace Travel_Agent.Controllers
         {
             _service = service;
         }
-        [HttpPost("Create")]
+        [HttpPost("Create a new user")]
         public async Task<IActionResult> Register([FromBody] RegisterDto payload)
         {
             var response = await _service.RegisterNewUser(payload);

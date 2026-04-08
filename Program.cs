@@ -19,6 +19,9 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options
  .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+ builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped <IAuthService, AuthService>();
 builder.Services.AddScoped <IEmailService, EmailService>();
 builder.Services.AddScoped <IEmployee, Employee>();
@@ -56,10 +59,12 @@ builder.Services.AddAuthentication(Options =>
     };
 });
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -67,3 +72,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapScalarApiReference();
 app.Run();
+

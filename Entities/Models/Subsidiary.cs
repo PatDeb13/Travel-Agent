@@ -9,6 +9,7 @@ namespace Travel_Agent.Entities.Models
     {
         public int Id {get; set;}
         public string Name{get; set;}
+        public string SubsidiaryHead { get; set; }
         public ICollection<Employee> Employees { get; set; }
     }
 }

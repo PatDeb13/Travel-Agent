@@ -4,35 +4,32 @@ using Travel_Agent.Auth;
 
 namespace Travel_Agent.Auth.AuthServices
 {
-    public class EmailService:IEmailService
+   public class EmailService : IEmailService
+{
+    public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
-        public async Task<ResponseModelAuth<string>> EmailSettings(string toEmail , string subject, string body, string EmployeeId)
+        using var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
         {
-            using var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
-            {
-                Credentials = new NetworkCredential("c80f378df9d343", "f65e83f2435358"),
-                EnableSsl = true
-            };
-            var message = new MailMessage(
-                "hello@demomailtrap.co",
-                "obamuyipatience13@gmail.com",
-                "Hello World",
-                "$This is your EmployeeId: {employeeId}"
-            );
+            Credentials = new NetworkCredential("c80f378df9d343", "f65e83f2435358"),
+            EnableSsl = true
+        };
 
-            await client.SendMailAsync(message);
+        var message = new MailMessage(
+            "hello@demomailtrap.co",
+            toEmail,
+            subject,
+            body
+        );
 
-            return new ResponseModelAuth<string>
-            {
-                IsSuccessful=true,
-                Message= "Email sent successful",
-                Data = EmployeeId
-            };
+        await client.SendMailAsync(message);
+    
+     
         }
     }
 
     public interface IEmailService
     {
-        Task<ResponseModelAuth<string>> EmailSettings(string toEmail , string subject, string body, string EmployeeId);
+        Task SendEmailAsync(string toEmail, string subject, string body);
+        
     }
 }
