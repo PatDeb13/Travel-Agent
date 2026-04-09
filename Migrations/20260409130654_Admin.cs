@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Travel_Agent.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentityMigration : Migration
+    public partial class Admin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,11 +30,18 @@ namespace Travel_Agent.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EmployeeId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Level = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Subsidiary = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    LineManager = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -189,6 +196,12 @@ namespace Travel_Agent.Migrations
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_EmployeeId",
+                table: "AspNetUsers",
+                column: "EmployeeId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",

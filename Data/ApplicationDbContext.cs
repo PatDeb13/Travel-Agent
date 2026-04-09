@@ -1,33 +1,37 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Travel_Agent.Auth;
-using Travel_Agent.Auth.AuthModel;
+using Travel_Agent.Models;
+using Travel_Agent.Models.DTO;
 
-namespace Travel_Agent.Entities.Models.Data
+namespace Travel_Agent.Data
 {
-    public class ApplicationDbContext: IdentityDbContext<ApplicationUser>
-    
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base (options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
-            
         }
-        public DbSet<Employee> Employees {get; set;}
-        public DbSet<Driver> Drivers {get; set;}
-        public DbSet<Location>  Locations {get; set;}
-         public DbSet<Vehicle> Vehicles {get; set;}
-         public DbSet<Subsidiary> Subsidiaries{get; set;}
-         public DbSet<Position>Positions {get; set;}
-          public DbSet<Dashboard> Dashboards{get; set;}
-    //      public DbSet<Log> Logs {get; set;}
-          public DbSet<RefreshToken> RefreshTokens{get; set;}
 
-
-        
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            
+            builder.Entity<ApplicationUser>(entity =>
+            {
+                entity.HasIndex(u => u.EmployeeId).IsUnique();
+                
+                entity.Property(u => u.Level)
+                    .HasConversion<string>()
+                    .HasMaxLength(10);
+                
+                entity.Property(u => u.FirstName).HasMaxLength(100);
+                entity.Property(u => u.LastName).HasMaxLength(100);
+                entity.Property(u => u.EmployeeId).HasMaxLength(50);
+                entity.Property(u => u.Subsidiary).HasMaxLength(200);
+                entity.Property(u => u.Unit).HasMaxLength(200);
+                entity.Property(u => u.LineManager).HasMaxLength(100);
+                
+            });
+        }
     }
-
 }

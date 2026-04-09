@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Travel_Agent.Entities.Models
+namespace Travel_Agent.Models
 {
-    public class Level
+    public class User
     {
-        public string LevelName{get; set;}
+        
     }
 }
