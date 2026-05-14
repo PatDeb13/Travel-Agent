@@ -12,8 +12,8 @@ using Travel_Agent.Data;
 namespace Travel_Agent.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260414144544_isactive")]
-    partial class isactive
+    [Migration("20260512121412_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -234,10 +234,9 @@ namespace Travel_Agent.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Subsidiary")
-                        .IsRequired()
+                    b.Property<int>("Subsidiary")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("int");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Travel_Agent.Migrations
 {
     /// <inheritdoc />
-    public partial class Admin : Migration
+    public partial class @new : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,9 +34,10 @@ namespace Travel_Agent.Migrations
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     EmployeeId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Level = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Subsidiary = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Subsidiary = table.Column<int>(type: "int", maxLength: 200, nullable: false),
                     Unit = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     LineManager = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

@@ -12,10 +12,10 @@ namespace Travel_Agent.Models
         public string LastName { get; set; } = string.Empty;
         public string EmployeeId { get; set; } = string.Empty;
         public Level Level { get; set; }
-        public string Subsidiary { get; set; } = string.Empty;
-        public string Unit { get; set; } = string.Empty;
+        public Subsidiary Subsidiary { get; set; } 
+        public string Unit { get; set; } =string.Empty;
         public string LineManager { get; set; } ="N";
-         public bool IsActive{get; set;}
+         public bool IsActive{get; set;} =true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
@@ -27,4 +27,15 @@ namespace Travel_Agent.Models
         Junior,
         Senior
     }
+
+    public enum Subsidiary
+    {
+        OPTIMA,
+        DOYIINLAT,
+        HERBALFIN,
+        ERP
+    }
+
+
+   
 }

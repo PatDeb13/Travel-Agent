@@ -13,7 +13,7 @@ namespace Travel_Agent.Models.DTO
         public string LastName { get; set; } = string.Empty;
         public string EmployeeId { get; set; } = string.Empty;
         public Level Level { get; set; }
-        public string Subsidiary { get; set; } = string.Empty;
+        public Subsidiary Subsidiary { get; set; } 
         public string Unit { get; set; } = string.Empty;
         public string? LineManager { get; set; }="N";
     }

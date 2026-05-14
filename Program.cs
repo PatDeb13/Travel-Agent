@@ -19,6 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options
  .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IRegisterDtoServices, RegisterDtoService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     // Configure Identity options
@@ -117,8 +118,8 @@ async Task SeedDataAsync(IServiceProvider services)
                 LastName = "Administrator",
                 EmployeeId = "EMP001",
                 Level = Level.Senior,
-                Subsidiary = "",
-                Unit = "",
+                Subsidiary =Subsidiary.OPTIMA,
+                Unit ="",
                 LineManager = "Y",
                 EmailConfirmed = true,
                 CreatedAt = DateTime.UtcNow,

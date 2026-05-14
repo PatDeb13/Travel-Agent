@@ -21,16 +21,18 @@ namespace Travel_Agent.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
         public RegisterDtoService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+            RoleManager<IdentityRole> roleManager, IConfiguration configuration, IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _configuration =configuration;
+            _emailService = emailService;
         }
 
     public async Task<ResponseDto<string>> CreatUser(RegisterDto dto)
@@ -156,12 +158,12 @@ namespace Travel_Agent.Services
                 };
             }
             var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user.IsActive)
+              if (user == null)
             {
                 return new ResponseDto<string>
                 {
-                    IsSuccessful=true,
-                    Message= "Check your email for reset Password link"
+                    IsSuccessful = true,
+                    Message = "If your email is registered, you will receive a password reset link."
                 };
             }
             if (!user.IsActive)
@@ -169,7 +171,7 @@ namespace Travel_Agent.Services
                 return new ResponseDto<string>
                 {
                     IsSuccessful= false,
-                    Message= " The email has been deactivated by adminstrator! construt your Admin!!!"
+                    Message= " The email has been deactivated by adminstrator! construct your Admin!!!"
 
                 };
             }
@@ -178,16 +180,151 @@ namespace Travel_Agent.Services
               var encodedToken = WebUtility.UrlEncode(token);
               var encodedEmail = WebUtility.UrlEncode(dto.Email);
 
-              var resetLink = $"https://yourapp.com/reset-password?email={encodedEmail}&token={encodedToken}";
-                 Console.WriteLine($"Password reset token for {user.Email}: {token}");
-    Console.WriteLine($"Reset link: {resetLink}");
-    
-    return new ResponseDto<string>
+              var resetLink =  $"https://localhost:5232/api/Auth/reset-password?email={encodedEmail}&token={encodedToken}";
+              var subject ="Reset Your Password-Travel Agent";
+              var body = GenerateResetPasswordEmail(user.FirstName, resetLink);
+             try
     {
-        IsSuccessful = true,
-        Message = "If your email is registered, you will receive a password reset link."
-      };
-   }
+        await _emailService.SendEmail(dto.Email, subject, body, isHtml: true);
+        
+        return new ResponseDto<string>
+        {
+            IsSuccessful = true,
+            Message = "If your email is registered, you will receive a password reset link."
+        };
+    }
+    catch (Exception ex)
+    {
+        return new ResponseDto<string>
+        {
+            IsSuccessful = false,
+            Message = ex.Message
+        };
+    }
+}
+
+      private string GenerateResetPasswordEmail(string firstName, string resetLink)
+{
+    return @"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Email</title>
+    <style>
+        * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.email-container {
+  background: #ffffff;
+  border: #e2e8f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+.logoBox {
+  width: 100px;
+  object-fit: contain;
+}
+.logo {
+  width: 100%;
+  height: 100%;
+}
+
+.content-box {
+  border: 3px;
+  padding: 20px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+.text {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.btn {
+  display: inline-block;
+  background: #0d47a1;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.btn:hover {
+  background: #1565c0;
+}
+
+.footer {
+  font-size: 14px;
+  color: #666;
+}
+
+    </style>
+ </head>
+ <body>
+
+    <div class=""email-container"">
+
+        <!-- Logo -->
+         <div class=""logoBox"">
+
+             <img src=""Image/Frame 1686560347.png"" alt=""Logo"" class=""logo"">
+         </div>
+
+        <!-- Content -->
+        <div class=""content-box"">
+
+            <h2 class=""title"">
+                PASSWORD RESET REQUEST
+            </h2>
+
+            <p class=""text"">
+                Dear " + (string.IsNullOrWhiteSpace(firstName) ? "User" : firstName) + @",
+                  </p>
+
+            <p class=""text"">
+                We received a request to reset your password. Click the button below to create a new password.
+            </p>
+
+            <a href=""" + resetLink + @""" class=""btn"">
+                Reset Password
+            </a>
+
+            <p class=""footer"">
+                If you didn't request this, please ignore this email.
+            </p>
+            <p class=""footer"">
+                Thanks.
+            </p>
+        </div>
+    </div>
+ </body>
+ </html>";
+}
+
 
     public async Task<ResponseDto<string >> ResetPassword(ResetPasswordDto dto)
         {
@@ -257,7 +394,7 @@ namespace Travel_Agent.Services
                     Message ="Invalid email or password"
                 };
             }
-            if (user.IsActive)
+            if (!user.IsActive)
             {
                 return new ResponseDto<LoginResponseDto>
                 {
@@ -310,7 +447,7 @@ namespace Travel_Agent.Services
                 new Claim("LastName", user.LastName ?? ""),
                 new Claim("EmployeeId", user.EmployeeId ?? ""),
                 new Claim("Level", user.Level.ToString()),
-                new Claim("Subsidiary", user.Subsidiary ?? ""),
+                new Claim("Subsidiary", user.Subsidiary.ToString()?? ""),
                 new Claim("Unit", user.Unit ?? "")
             };
 
