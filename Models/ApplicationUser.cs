@@ -15,7 +15,7 @@ namespace Travel_Agent.Models
         public string Subsidiary { get; set; } = string.Empty;
         public string Unit { get; set; } = string.Empty;
         public string LineManager { get; set; } ="N";
-        
+         public bool IsActive{get; set;}
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 

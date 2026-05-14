@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Azure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Travel_Agent.Models.DTO;
 using Travel_Agent.Services;
 
@@ -30,5 +32,47 @@ namespace Travel_Agent.Controllers
             }
             return Ok(response);
         }
-    }
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody]LoginDto dto)
+        {
+            var response = await _services.LoginUser(dto);
+            if (response ==null)
+            {
+                return BadRequest("Not successful");
+            }
+            return Ok(response);
+        }
+
+    
+        [HttpPost ("forgot-password")]
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _services.ForgotPassword(dto);
+            if(!result.IsSuccessful)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _services.ResetPassword(dto);
+            if (!result.IsSuccessful)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+}
 }
